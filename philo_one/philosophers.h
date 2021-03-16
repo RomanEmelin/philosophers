@@ -27,20 +27,6 @@
 */
 # define IS_SPACE(x) (x == ' ' || x == '\t' || x == '\n' || x == '\v' \
 						|| x == '\r' || x == '\f')
-/*
-** A philo is a structure that contains:
-** Time to eat in ms, time to die in ms, time to sleep in ms
-** And Number Of Times Each Philosopher Must Eat, optional
-*/
-
-typedef struct		s_args
-{
-	int 			philo_cnt;
-	int 			time_to_die;
-	int 			time_to_eat;
-	int 			time_to_sleep;
-	int 			noteme;
-}					t_args;
 
 typedef struct		s_philo
 {
@@ -50,6 +36,23 @@ typedef struct		s_philo
 	long 			birth;
 	long			meal;
 }					t_philo;
+
+/*
+** A args is a structure that contains:
+** Time to eat in ms, time to die in ms, time to sleep in ms and etc
+** And Number Of Times Each Philosopher Must Eat, optional
+*/
+
+typedef struct		s_args
+{
+	t_philo			philosophers[];
+	pthread_mutex_t forks[];
+	int 			philo_cnt;
+	int 			time_to_die;
+	int 			time_to_eat;
+	int 			time_to_sleep;
+	int 			noteme;
+}					t_args;
 
 long 	ft_atoi(char *str);
 int		ft_strlen(char *str);
@@ -71,5 +74,14 @@ int		print_error(char *str);
 int		mutex_destroy(pthread_mutex_t *forks, int cnt);
 int		init_forks(pthread_mutex_t *forks, t_args *args);
 int		initializate_simulation(t_args *args);
+long	get_birth_time(void);
+int 	set_forks(t_args *args, t_philo *philosophers);
+
+/*
+** Start simulation
+*/
+
+int		start_simulation(t_args *args);
+void	*simulation(void *pntr_on_args);
 
 #endif
