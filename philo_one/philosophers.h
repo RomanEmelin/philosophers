@@ -18,6 +18,7 @@
 # include <unistd.h>
 # include <limits.h>
 # include <pthread.h>
+# include <sys/time.h>
 
 /*
 ** Little macros to find out if it space or not
@@ -32,23 +33,23 @@
 ** And Number Of Times Each Philosopher Must Eat, optional
 */
 
-typedef struct	s_args
+typedef struct		s_args
 {
-	int 		philo_cnt;
-	int 		time_to_die;
-	int 		time_to_eat;
-	int 		time_to_sleep;
-	int 		noteme;
-}				t_args;
+	int 			philo_cnt;
+	int 			time_to_die;
+	int 			time_to_eat;
+	int 			time_to_sleep;
+	int 			noteme;
+}					t_args;
 
 typedef struct		s_philo
 {
-	unsigned int	number;
+	unsigned int	id;
 	int 			l_fork;
 	int 			r_fork;
 	long 			birth;
 	long			meal;
-};
+}					t_philo;
 
 long 	ft_atoi(char *str);
 int		ft_strlen(char *str);

@@ -12,14 +12,31 @@
 
 #include "philosophers.h"
 
-int 		philosopher_take_forks(pthread_mutex_t *forks, t_args *args)
+void 		give_forks(t_philo *philosopher, int l_fork, int r_fork)
+{
+	philosopher->id = l_fork + 1;
+	if (!(l_fork % 2))
+	{
+		philosopher->l_fork = r_fork;
+		philosopher->r_fork = l_fork;
+	}
+	else
+	{
+		philosopher->l_fork = l_fork;
+		philosopher->r_fork = r_fork;
+	}
+	philosopher->birth =
+}
+
+int 		philosopher_take_forks(pthread_mutex_t *forks, t_args *args,
+											t_philo **philosophers)
 {
 	int i;
 
 	i = 0;
 	while (i < args->philo_cnt)
 	{
-
+		give_forks(&(*philosophers[i]), i, (i + 1) % args->philo_cnt);
 	}
 }
 
@@ -45,12 +62,12 @@ int			init_forks(pthread_mutex_t *forks, t_args *args)
 
 int			initializate_simulation(t_args *args)
 {
-	//pthread_t philosophers[args->philo_cnt];
+	t_philo philosophers[args->philo_cnt];
 	pthread_mutex_t forks[args->philo_cnt];
 
 	if (init_forks(forks, args))
 		return (mutex_destroy(forks, args->philo_cnt));
-	if (philosophers_take_forks(forks, args))
+	if (philosophers_take_forks(forks, args, &philosophers))
 		return (1);
 	return (0);
 }
