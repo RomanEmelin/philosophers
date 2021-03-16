@@ -13,19 +13,6 @@
 #include "philosophers.h"
 
 /*
-** The function prints the error to the second fd
-** @param String with error text
-** @return 1
-*/
-int		print_error(char *str)
-{
-	write(2, "Error: ", 7);
-	write(2, str, ft_strlen(str));
-	write(2, "\n", 1);
-	return (1);
-}
-
-/*
 ** The function will check if a character is a digit
 ** @param character to check
 ** @return true if is digit or false if isn't

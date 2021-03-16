@@ -44,38 +44,38 @@ int validation(char **av)
 ** @return 1 if variables is invalid, 0 if allright
 */
 
-int	init_philo(t_philo *philo, int ac, char **av)
+int	init_philo_args(t_args *args, int ac, char **av)
 {
+	long var[5];
 	if (validation(av))
 		return (1);
-	if (ft_atoi(av[1]) == LONG_MAX || ft_atoi(av[2]) == LONG_MAX ||
-			ft_atoi(av[3]) == LONG_MAX || ft_atoi(av[4]) == LONG_MAX)
-		return (print_error("overflow arguments"));
-	philo->philo_cnt = ft_atoi(av[1]);
-	philo->time_to_die = ft_atoi(av[2]);
-	philo->time_to_sleep = ft_atoi(av[3]);
-	philo->time_to_eat = ft_atoi(av[4]);
+	if (integer_overflow_checker(var, av))
+		return (print_error("overflow arguments.\n"));
+	args->philo_cnt = var[0];
+	args->time_to_die = var[1];
+	args->time_to_sleep = var[2];
+	args->time_to_eat = var[3];
 	if (ac == 6)
 	{
-		if (ft_atoi(av[5]) == LONG_MAX)
-			return (print_error("overflow arguments"));
-		philo->noteme = ft_atoi(av[5]);
+		if ((var[4] = ft_atoi(av[5])) == LONG_MAX)
+			return (print_error("overflow arguments.\n"));
+		args->noteme = var[4];
 	}
 	else
-		philo->noteme = 0;
-	if (philo->philo_cnt < 2 || philo->philo_cnt > 200)
-		return (print_error("invalid number of philosophers"));
+		args->noteme = 0;
+	if (args->philo_cnt < 2 || args->philo_cnt > 200)
+		return (print_error("invalid number of philosophers.\n"));
 	return (0);
 }
 
 int main(int ac, char **av)
 {
-	t_philo philo;
+	t_args args;
 
 	if (ac < 5 || ac > 6)
 		return (print_error("wrong number of arguments"));
-	if (init_philo(&philo, ac, av))
+	if (init_philo_args(&args, ac, av))
 		return (1);
-	return (0);
+	return (initializate_simulation(&args));
 }
 
