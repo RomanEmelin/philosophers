@@ -30,7 +30,7 @@ int mutex_destroy(pthread_mutex_t *forks, int cnt)
 ** @return 1 and print error if gettimeofday return -1 and time if success
 */
 
-long get_birth_time(void)
+long get_time(void)
 {
 	struct timeval	time;
 

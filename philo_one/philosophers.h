@@ -33,8 +33,9 @@ typedef struct		s_philo
 	unsigned int	id;
 	int 			l_fork;
 	int 			r_fork;
-	long 			birth;
-	long			meal;
+	long 			eat;
+	long			birth;
+	long 			limit;
 }					t_philo;
 
 /*
@@ -45,13 +46,13 @@ typedef struct		s_philo
 
 typedef struct		s_args
 {
-	t_philo			philosophers[];
-	pthread_mutex_t forks[];
 	int 			philo_cnt;
 	int 			time_to_die;
 	int 			time_to_eat;
 	int 			time_to_sleep;
 	int 			noteme;
+	t_philo			*philosopher;
+	pthread_mutex_t *forks;
 }					t_args;
 
 long 	ft_atoi(char *str);
@@ -74,14 +75,16 @@ int		print_error(char *str);
 int		mutex_destroy(pthread_mutex_t *forks, int cnt);
 int		init_forks(pthread_mutex_t *forks, t_args *args);
 int		initializate_simulation(t_args *args);
-long	get_birth_time(void);
-int 	set_forks(t_args *args, t_philo *philosophers);
+long	get_time(void);
+int		set_forks(t_args *args, t_philo philosophers[]);
+void 	give_forks(t_philo *philosopher, int l_fork, int r_fork);
 
 /*
 ** Start simulation
 */
 
-int		start_simulation(t_args *args);
+int		start_simulation(t_args *args, t_philo *philosophers);
 void	*simulation(void *pntr_on_args);
+int		take_forks(pthread_mutex_t *forks ,t_philo *philo);
 
 #endif
