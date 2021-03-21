@@ -50,7 +50,7 @@ int	init_philo_args(t_args *args, int ac, char **av)
 	if (validation(av))
 		return (1);
 	if (integer_overflow_checker(var, av))
-		return (print_error("overflow arguments.\n"));
+		return (print_error("overflow arguments."));
 	args->philo_cnt = var[0];
 	args->time_to_die = var[1];
 	args->time_to_sleep = var[2];
@@ -58,24 +58,31 @@ int	init_philo_args(t_args *args, int ac, char **av)
 	if (ac == 6)
 	{
 		if ((var[4] = ft_atoi(av[5])) == LONG_MAX)
-			return (print_error("overflow arguments.\n"));
-		args->noteme = var[4];
+			return (print_error("overflow arguments."));
+		args->must_eat_cnt = var[4];
 	}
 	else
-		args->noteme = 0;
+		args->must_eat_cnt = 0;
 	if (args->philo_cnt < 2 || args->philo_cnt > 200)
-		return (print_error("invalid number of philosophers.\n"));
+		return (print_error("invalid number of philosophers."));
+	args->died = 0;
 	return (0);
 }
 
 int main(int ac, char **av)
 {
-	t_args args;
+	t_args *args;
 
 	if (ac < 5 || ac > 6)
-		return (print_error("wrong number of arguments"));
-	if (init_philo_args(&args, ac, av))
+		return (print_error("wrong number of arguments."));
+	args = (t_args *)malloc(sizeof(t_args));
+	if (!args)
+		return (print_error("can't allocate memory for arguments."));
+	if (init_philo_args(args, ac, av))
 		return (1);
-	return (initializate_simulation(&args));
+	if (initializate_simulation(args))
+		return (1);
+	free(args);
+	return (0);
 }
 

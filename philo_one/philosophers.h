@@ -11,14 +11,21 @@
 /* ************************************************************************** */
 
 
-#ifndef PHILOSOPHERS_PHILOSOPHERS_H
-# define PHILOSOPHERS_PHILOSOPHERS_H
+#ifndef PHILOSOPHERS_H
+# define PHILOSOPHERS_H
 
 # include <stdio.h>
 # include <unistd.h>
 # include <limits.h>
 # include <pthread.h>
 # include <sys/time.h>
+# include <stdlib.h>
+# define DIE 1
+# define FORK 2
+# define EAT 3
+# define SLEEP 4
+# define THINK 5
+# define FULL 6
 
 /*
 ** Little macros to find out if it space or not
@@ -28,20 +35,18 @@
 # define IS_SPACE(x) (x == ' ' || x == '\t' || x == '\n' || x == '\v' \
 						|| x == '\r' || x == '\f')
 
-typedef struct		s_philo
+typedef struct 		s_mutexes
 {
-	unsigned int	id;
-	int 			l_fork;
-	int 			r_fork;
-	long 			eat;
-	long			birth;
-	long 			limit;
-}					t_philo;
+	pthread_mutex_t *m_forks;
+	pthread_mutex_t	m_died;
+	pthread_mutex_t	m_print;
+}					t_mutexes;
 
 /*
 ** A args is a structure that contains:
 ** Time to eat in ms, time to die in ms, time to sleep in ms and etc
 ** And Number Of Times Each Philosopher Must Eat, optional
+** Count of philosophers, and their status, such as died and full(optional)
 */
 
 typedef struct		s_args
@@ -50,10 +55,21 @@ typedef struct		s_args
 	int 			time_to_die;
 	int 			time_to_eat;
 	int 			time_to_sleep;
-	int 			noteme;
-	t_philo			*philosopher;
-	pthread_mutex_t *forks;
+	int 			must_eat_cnt;
+	int 			died;
 }					t_args;
+
+typedef struct		s_philo
+{
+	unsigned int	id;
+	pthread_mutex_t *l_fork;
+	pthread_mutex_t *r_fork;
+	t_mutexes		*mutexes;
+	t_args			*args;
+	pthread_t 		thread;
+	long 			start_time;
+	long 			last_eat;
+}					t_philo;
 
 long 	ft_atoi(char *str);
 int		ft_strlen(char *str);
@@ -73,18 +89,17 @@ int		print_error(char *str);
 */
 
 int		mutex_destroy(pthread_mutex_t *forks, int cnt);
-int		init_forks(pthread_mutex_t *forks, t_args *args);
 int		initializate_simulation(t_args *args);
 long	get_time(void);
-int		set_forks(t_args *args, t_philo philosophers[]);
-void 	give_forks(t_philo *philosopher, int l_fork, int r_fork);
+t_philo *init_philo(t_args *args, t_mutexes *mutexes);
+void	print_status(t_philo *philo, int flag, long start);
+void	finish_simulation(t_philo *philo, t_mutexes *mutexes);
 
 /*
 ** Start simulation
 */
 
-int		start_simulation(t_args *args, t_philo *philosophers);
-void	*simulation(void *pntr_on_args);
-int		take_forks(pthread_mutex_t *forks ,t_philo *philo);
+int		start_threads(t_args *args, t_philo *philosophers);
+void	*simulation(void *philosopher);
 
 #endif

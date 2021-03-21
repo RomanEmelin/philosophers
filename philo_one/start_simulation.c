@@ -12,85 +12,70 @@
 
 #include "philosophers.h"
 
-int g_die = 0;
-
-int		take_forks(pthread_mutex_t *forks ,t_philo *philo)
+void	*is_die(void *philo)
 {
-	long time;
+	t_philo *p;
 
-	if (pthread_mutex_lock(&forks[philo->l_fork]) ||
-			pthread_mutex_lock(&forks[philo->r_fork]))
-		return (print_error("mutex can't be locked"));
-	if ((time = get_time()) == 1)
-		return (1);
-	time = time - philo->birth;
-	printf("%ld ms %d has taken a fork\n", time, philo->id);
-	return (0);
-}
-
-int 	die(t_args *args, t_philo *philo)
-{
-	long t;
-
-	if (philo->limit > args->time_to_die)
+	p = philo;
+	while (!p->args->died)
 	{
-		t = get_time() - philo->birth;
-		printf("%ld ms %d is die\n", t, philo->id);
-		g_die = 1;
-		return (1);
+		if (get_time() - p->start_time - p->last_eat > p->args->time_to_die)
+		{
+			print_status(p, DIE, p->start_time);
+			pthread_mutex_lock(&p->mutexes->m_died);
+			p->args->died = DIE;
+			pthread_mutex_unlock(&p->mutexes->m_died);
+			break;
+		}
 	}
-	return (0);
+	return (NULL);
 }
 
-int	eating(t_args *args, t_philo *philo)
+void 	eating(t_philo *philo)
 {
-	long t;
-
-	t = get_time() - philo->birth;
-	printf("%ld ms %d is eating\n", t, philo->id);
-	philo->limit = 0;
-	usleep(args->time_to_eat * 1000);
-	pthread_mutex_unlock(&args->forks[philo->l_fork]);
-	pthread_mutex_unlock(&args->forks[philo->r_fork]);
-	return (0);
+	pthread_mutex_lock(philo->l_fork);
+	print_status(philo, FORK, philo->start_time);
+	pthread_mutex_lock(philo->r_fork);
+	print_status(philo, FORK, philo->start_time);
+	print_status(philo, EAT, philo->start_time);
+	philo->last_eat = get_time() - philo->start_time;
+	usleep(philo->args->time_to_eat * 1000L);
+	pthread_mutex_unlock(philo->l_fork);
+	pthread_mutex_unlock(philo->r_fork);
 }
 
-int		sleeping(t_args *args, t_philo *philo)
+void	sleeping(t_philo *philo)
 {
-	long t;
-
-	if (die(args, philo))
-		return (1);
-	t = get_time() - philo->birth;
-	printf("%ld ms %d is sleeping\n", t, philo->id);
-	usleep(args->time_to_sleep * 1000);
-	return (0);
+	print_status(philo, SLEEP, philo->start_time);
+	usleep(philo->args->time_to_sleep);
 }
 
-void	*simulation(void *pntr_on_args)
+void	*simulation(void *philosopher)
 {
-	t_args *args;
+	t_philo		*philo;
+	pthread_t	died;
+	int 		i;
 
-	args = (t_args *)pntr_on_args;
-	while (1)
+	philo = philosopher;
+	pthread_create(&died, NULL, &is_die, (void *)philo);
+	pthread_detach(died);
+	if (philo->id % 2)
+		usleep(philo->args->time_to_eat * 1000L);
+	i = 0;
+	while (!philo->args->died)
 	{
-		if (die(args, args->philosopher) || g_die)
+		eating(philo);
+		if (philo->args->must_eat_cnt)
 		{
-			return (NULL);
+			i++;
+			if (i == philo->args->must_eat_cnt)
+			{
+				print_status(philo, FULL, philo->start_time);
+				return (NULL);
+			}
 		}
-		if (take_forks(args->forks, args->philosopher))
-		{
-			return (NULL);
-		}
-		if (eating(args, args->philosopher))
-		{
-			return (NULL);
-		}
-		if (sleeping(args,args->philosopher))
-		{
-			return (NULL);
-		}long t = get_time() - args->philosopher->birth;
-		printf("%ld ms %d is thinking\n", t, args->philosopher->id);
+		sleeping(philo);
+		print_status(philo, THINK, philo->start_time);
 	}
 	return (NULL);
 }
@@ -102,27 +87,22 @@ void	*simulation(void *pntr_on_args)
 ** @return 1 if error, 0 if success
 */
 
-int start_simulation(t_args *args, t_philo *philosophers)
+int start_threads(t_args *args, t_philo *philo)
 {
 	int i;
-	pthread_t thread[args->philo_cnt];
 
-	i = 0;
-	while (i < args->philo_cnt)
+	i = -1;
+	while (++i < args->philo_cnt)
 	{
-		args->philosopher = &philosophers[i];
-		if (pthread_create(&thread[i], NULL, simulation, (void *)args))
+		if (pthread_create(&philo[i].thread, NULL, simulation, &philo[i]))
 			return (print_error("%d thread can't create."));
-		i++;
+		usleep(20);
 	}
-	i = 0;
-	while (i < args->philo_cnt)
-	{
-		if (pthread_join(thread[i], NULL))
+
+	i = -1;
+	while (++i < args->philo_cnt)
+		if (pthread_join(philo[i].thread, NULL))
 			return (print_error("%d thread can't join."));
-		i++;
-	}
-	mutex_destroy(args->forks, args->philo_cnt);
 	return (0);
 }
 
