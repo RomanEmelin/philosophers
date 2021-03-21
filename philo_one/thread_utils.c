@@ -6,7 +6,7 @@
 /*   By: mwinter <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/15 15:53:20 by mwinter           #+#    #+#             */
-/*   Updated: 2021/03/15 15:53:23 by mwinter          ###   ########.fr       */
+/*   Updated: 2021/03/21 21:43:33 by mwinter          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,10 @@
 
 /*
 ** Function destroy mutex and philo, also free allocated memory
-** @param forks array, forks count
+** @param Philosophers array, Structure with mutexes array and mutex
 */
 
-void finish_simulation(t_philo *philo, t_mutexes *mutexes)
+void	finish_simulation(t_philo *philo, t_mutexes *mutexes)
 {
 	int i;
 
@@ -30,13 +30,12 @@ void finish_simulation(t_philo *philo, t_mutexes *mutexes)
 	free(mutexes->m_forks);
 }
 
-
 /*
 ** Function create timestamp in ms
 ** @return current time
 */
 
-long get_time(void)
+long	get_time(void)
 {
 	struct timeval	time;
 
@@ -48,7 +47,8 @@ long get_time(void)
 ** Fucntion print message about philosopher status
 ** @param philosopher, action flag, program start time
 */
-void print_status(t_philo *philo, int flag, long start)
+
+void	*print_status(t_philo *philo, int flag, long start)
 {
 	long t;
 
@@ -70,4 +70,5 @@ void print_status(t_philo *philo, int flag, long start)
 			printf("%ld ms %d is full\n", t, philo->id);
 	}
 	pthread_mutex_unlock(&philo->mutexes->m_print);
+	return (NULL);
 }

@@ -6,7 +6,7 @@
 /*   By: mwinter <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/16 14:54:21 by mwinter           #+#    #+#             */
-/*   Updated: 2021/03/16 14:54:23 by mwinter          ###   ########.fr       */
+/*   Updated: 2021/03/21 20:03:13 by mwinter          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,11 @@ int		print_error(char *str)
 	return (1);
 }
 
-int integer_overflow_checker(long var[5], char **av)
+/*
+** the Fucntion is check integer overflow
+*/
+
+int		integer_overflow_checker(long var[5], char **av)
 {
 	if ((var[0] = ft_atoi(av[1])) == LONG_MAX ||
 			(var[1] = ft_atoi(av[2])) == LONG_MAX ||
@@ -35,4 +39,3 @@ int integer_overflow_checker(long var[5], char **av)
 		return (1);
 	return (0);
 }
-

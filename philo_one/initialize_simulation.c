@@ -6,7 +6,7 @@
 /*   By: mwinter <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/15 13:58:44 by mwinter           #+#    #+#             */
-/*   Updated: 2021/03/15 13:58:45 by mwinter          ###   ########.fr       */
+/*   Updated: 2021/03/21 20:13:52 by mwinter          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,10 @@
 ** @return 1 if fail, 0 if success
 */
 
-t_philo 	*init_philo(t_args *args, t_mutexes *mutexes)
+t_philo		*init_philo(t_args *args, t_mutexes *mutexes)
 {
-	int i;
-	long time;
+	int		i;
+	long	time;
 	t_philo	*philo;
 
 	i = -1;
@@ -46,12 +46,12 @@ t_philo 	*init_philo(t_args *args, t_mutexes *mutexes)
 }
 
 /*
-** Function initialize mutex array
-** @param structure of mutex array, arguments structure
+** Function initialize mutex structure
+** @param structure with mutex array, arguments structure
 ** @return 1 and print error if init is failed, 0 if success
 */
 
-int 		init_mutexes(t_mutexes *mutexes, t_args *args)
+int			init_mutexes(t_mutexes *mutexes, t_args *args)
 {
 	int i;
 
@@ -76,15 +76,16 @@ int 		init_mutexes(t_mutexes *mutexes, t_args *args)
 ** @param structure with programm arguments
 ** @return 1 if error, 0 if success
 */
+
 int			initializate_simulation(t_args *args)
 {
 	t_philo			*philosophers;
-	t_mutexes 		*mutexes;
+	t_mutexes		*mutexes;
 
-	mutexes = (t_mutexes *)malloc(sizeof (t_mutexes));
+	mutexes = (t_mutexes *)malloc(sizeof(t_mutexes));
 	if (!mutexes)
 		return (print_error("can't allocate memory for mutexes."));
-	if (init_mutexes(mutexes,args))
+	if (init_mutexes(mutexes, args))
 		return (1);
 	philosophers = init_philo(args, mutexes);
 	if (!philosophers)

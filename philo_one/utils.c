@@ -6,7 +6,7 @@
 /*   By: mwinter <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/14 16:00:42 by mwinter           #+#    #+#             */
-/*   Updated: 2021/03/14 16:00:44 by mwinter          ###   ########.fr       */
+/*   Updated: 2021/03/21 20:08:07 by mwinter          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,12 +23,18 @@ int		is_digit(char c)
 	return ('0' <= c && c <= '9');
 }
 
+/*
+** The function check string length
+** @param string
+** @return string length
+*/
+
 int		ft_strlen(char *str)
 {
 	int i;
 
 	i = 0;
-	while(str[i])
+	while (str[i])
 		i++;
 	return (i);
 }
@@ -39,10 +45,10 @@ int		ft_strlen(char *str)
 ** @return an integer from a string
 */
 
-long 	ft_atoi(char *str)
+long	ft_atoi(char *str)
 {
-	int n;
-	long res;
+	int		n;
+	long	res;
 
 	n = 1;
 	res = 0;

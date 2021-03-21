@@ -6,7 +6,7 @@
 /*   By: mwinter <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/14 15:57:24 by mwinter           #+#    #+#             */
-/*   Updated: 2021/03/14 15:57:29 by mwinter          ###   ########.fr       */
+/*   Updated: 2021/03/21 20:11:26 by mwinter          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 ** @return print error and return 1 if argument is invalid or 0 if is valid
 */
 
-int validation(char **av)
+int	validation(char **av)
 {
 	int i;
 	int j;
@@ -47,29 +47,30 @@ int validation(char **av)
 int	init_philo_args(t_args *args, int ac, char **av)
 {
 	long var[5];
+
 	if (validation(av))
 		return (1);
 	if (integer_overflow_checker(var, av))
 		return (print_error("overflow arguments."));
 	args->philo_cnt = var[0];
 	args->time_to_die = var[1];
-	args->time_to_sleep = var[2];
-	args->time_to_eat = var[3];
+	args->time_to_eat = var[2];
+	args->time_to_sleep = var[3];
 	if (ac == 6)
 	{
 		if ((var[4] = ft_atoi(av[5])) == LONG_MAX)
 			return (print_error("overflow arguments."));
-		args->must_eat_cnt = var[4];
+		args->meal_cnt = var[4];
 	}
 	else
-		args->must_eat_cnt = 0;
+		args->meal_cnt = 0;
 	if (args->philo_cnt < 2 || args->philo_cnt > 200)
 		return (print_error("invalid number of philosophers."));
 	args->died = 0;
 	return (0);
 }
 
-int main(int ac, char **av)
+int	main(int ac, char **av)
 {
 	t_args *args;
 
@@ -85,4 +86,3 @@ int main(int ac, char **av)
 	free(args);
 	return (0);
 }
-

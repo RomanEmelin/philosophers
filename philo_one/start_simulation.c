@@ -6,7 +6,7 @@
 /*   By: mwinter <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/16 21:06:11 by mwinter           #+#    #+#             */
-/*   Updated: 2021/03/16 21:06:13 by mwinter          ###   ########.fr       */
+/*   Updated: 2021/03/21 21:48:42 by mwinter          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,13 +25,18 @@ void	*is_die(void *philo)
 			pthread_mutex_lock(&p->mutexes->m_died);
 			p->args->died = DIE;
 			pthread_mutex_unlock(&p->mutexes->m_died);
-			break;
+			break ;
 		}
 	}
 	return (NULL);
 }
 
-void 	eating(t_philo *philo)
+/*
+** The function simulates proccess of bind resources
+** using mutex
+*/
+
+void	eating(t_philo *philo)
 {
 	pthread_mutex_lock(philo->l_fork);
 	print_status(philo, FORK, philo->start_time);
@@ -44,17 +49,28 @@ void 	eating(t_philo *philo)
 	pthread_mutex_unlock(philo->r_fork);
 }
 
+/*
+** The fucntion puts the thread to sleep
+*/
+
 void	sleeping(t_philo *philo)
 {
 	print_status(philo, SLEEP, philo->start_time);
-	usleep(philo->args->time_to_sleep);
+	usleep(philo->args->time_to_sleep * 1000L);
 }
+
+/*
+** The fucntion simulate simple philosopher life
+** and create child thread where check died somebody or not
+** @param void pointer to philosopher structure
+** @return NULL
+*/
 
 void	*simulation(void *philosopher)
 {
 	t_philo		*philo;
 	pthread_t	died;
-	int 		i;
+	int			i;
 
 	philo = philosopher;
 	pthread_create(&died, NULL, &is_die, (void *)philo);
@@ -65,14 +81,11 @@ void	*simulation(void *philosopher)
 	while (!philo->args->died)
 	{
 		eating(philo);
-		if (philo->args->must_eat_cnt)
+		if (philo->args->meal_cnt)
 		{
 			i++;
-			if (i == philo->args->must_eat_cnt)
-			{
-				print_status(philo, FULL, philo->start_time);
-				return (NULL);
-			}
+			if (i == philo->args->meal_cnt)
+				return (print_status(philo, FULL, philo->start_time));
 		}
 		sleeping(philo);
 		print_status(philo, THINK, philo->start_time);
@@ -87,9 +100,9 @@ void	*simulation(void *philosopher)
 ** @return 1 if error, 0 if success
 */
 
-int start_threads(t_args *args, t_philo *philo)
+int		start_threads(t_args *args, t_philo *philo)
 {
-	int i;
+	int			i;
 
 	i = -1;
 	while (++i < args->philo_cnt)
@@ -98,11 +111,9 @@ int start_threads(t_args *args, t_philo *philo)
 			return (print_error("%d thread can't create."));
 		usleep(20);
 	}
-
 	i = -1;
 	while (++i < args->philo_cnt)
 		if (pthread_join(philo[i].thread, NULL))
 			return (print_error("%d thread can't join."));
 	return (0);
 }
-
