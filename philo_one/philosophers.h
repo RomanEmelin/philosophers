@@ -65,6 +65,7 @@ typedef struct		s_philo
 	pthread_mutex_t *l_fork;
 	pthread_mutex_t *r_fork;
 	t_mutexes		*mutexes;
+	pthread_mutex_t m_status;
 	t_args			*args;
 	pthread_t		thread;
 	long			start_time;
@@ -76,6 +77,8 @@ int					ft_strlen(char *str);
 int					print_error(char *str);
 int					init_philo_args(t_args *args, int ac, char **av);
 int					is_digit(char c);
+void				ft_putnbr_fd(int n, int fd);
+void				printing(char *str, long time, int id);
 
 /*
 ** Init arguments
@@ -101,6 +104,7 @@ long				get_time(void);
 t_philo				*init_philo(t_args *args, t_mutexes *mutexes);
 void				*print_status(t_philo *philo, int flag, long start);
 void				finish_simulation(t_philo *philo, t_mutexes *mutexes);
+void				usleep_fix(long sleep_time);
 
 /*
 ** Start simulation

@@ -5,7 +5,8 @@ SRCS = main.c\
        error_handler.c\
        utils.c\
        initialize_simulation.c\
-       start_simulation.c
+       start_simulation.c\
+       utils2.c
 
 HDR = ./
 

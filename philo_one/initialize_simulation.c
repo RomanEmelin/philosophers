@@ -41,6 +41,7 @@ t_philo		*init_philo(t_args *args, t_mutexes *mutexes)
 		philo[i].last_eat = time;
 		philo[i].args = args;
 		philo[i].mutexes = mutexes;
+		pthread_mutex_init(&philo[i].m_status, NULL);
 	}
 	return (philo);
 }

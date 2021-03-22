@@ -21,10 +21,13 @@ void	finish_simulation(t_philo *philo, t_mutexes *mutexes)
 {
 	int i;
 
-	free(philo);
+	i = -1;
+	while (++i < philo->args->philo_cnt)
+		pthread_mutex_destroy(&philo[i].m_status);
 	i = -1;
 	while (++i < philo->args->philo_cnt)
 		pthread_mutex_destroy(&mutexes->m_forks[i]);
+	free(philo);
 	pthread_mutex_destroy(&mutexes->m_print);
 	pthread_mutex_destroy(&mutexes->m_died);
 	free(mutexes->m_forks);
@@ -44,7 +47,7 @@ long	get_time(void)
 }
 
 /*
-** Fucntion print message about philosopher status
+** Function print message about philosopher status
 ** @param philosopher, action flag, program start time
 */
 
@@ -57,18 +60,26 @@ void	*print_status(t_philo *philo, int flag, long start)
 	if (!philo->args->died)
 	{
 		if (flag == DIE)
-			printf("%ld ms %d died\n", t, philo->id);
+			printing(" died\n", t, philo->id);
 		else if (flag == FORK)
-			printf("%ld ms %d has taken a fork\n", t, philo->id);
+			printing(" has taken a fork\n", t, philo->id);
 		else if (flag == EAT)
-			printf("%ld ms %d is eating\n", t, philo->id);
+			printing(" is eating\n", t, philo->id);
 		else if (flag == SLEEP)
-			printf("%ld ms %d is sleeping\n", t, philo->id);
+			printing(" is sleeping\n", t, philo->id);
 		else if (flag == THINK)
-			printf("%ld ms %d is thinking\n", t, philo->id);
+			printing(" is thinking\n", t, philo->id);
 		else if (flag == FULL)
-			printf("%ld ms %d is full\n", t, philo->id);
+			printing(" is full\n", t, philo->id);
 	}
 	pthread_mutex_unlock(&philo->mutexes->m_print);
 	return (NULL);
+}
+
+void printing(char *str, long time, int id)
+{
+	ft_putnbr_fd(time, 1);
+	write(1, " ms ", 4);
+	ft_putnbr_fd(id, 1);
+	write(1, str, ft_strlen(str));
 }

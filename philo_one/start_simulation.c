@@ -15,18 +15,24 @@
 void	*is_die(void *philo)
 {
 	t_philo *p;
+	long t;
 
 	p = philo;
 	while (!p->args->died)
 	{
-		if (get_time() - p->start_time - p->last_eat > p->args->time_to_die)
+		t = get_time() - p->start_time - p->last_eat;
+		pthread_mutex_lock(&p->m_status);
+		if (t > p->args->time_to_die)
 		{
 			print_status(p, DIE, p->start_time);
 			pthread_mutex_lock(&p->mutexes->m_died);
+		//	printf("%ld time of die\n", t);
 			p->args->died = DIE;
 			pthread_mutex_unlock(&p->mutexes->m_died);
+			pthread_mutex_unlock(&p->m_status);
 			break ;
 		}
+		pthread_mutex_unlock(&p->m_status);
 	}
 	return (NULL);
 }
@@ -39,18 +45,19 @@ void	*is_die(void *philo)
 void	eating(t_philo *philo)
 {
 	pthread_mutex_lock(philo->l_fork);
-	print_status(philo, FORK, philo->start_time);
 	pthread_mutex_lock(philo->r_fork);
 	print_status(philo, FORK, philo->start_time);
-	print_status(philo, EAT, philo->start_time);
 	philo->last_eat = get_time() - philo->start_time;
+	pthread_mutex_lock(&philo->m_status);
+	print_status(philo, EAT, philo->start_time);
 	usleep(philo->args->time_to_eat * 1000L);
+	pthread_mutex_unlock(&philo->m_status);
 	pthread_mutex_unlock(philo->l_fork);
 	pthread_mutex_unlock(philo->r_fork);
 }
 
 /*
-** The fucntion puts the thread to sleep
+** The function puts the thread to sleep
 */
 
 void	sleeping(t_philo *philo)
@@ -60,7 +67,7 @@ void	sleeping(t_philo *philo)
 }
 
 /*
-** The fucntion simulate simple philosopher life
+** The function simulate simple philosopher life
 ** and create child thread where check died somebody or not
 ** @param void pointer to philosopher structure
 ** @return NULL
@@ -75,8 +82,6 @@ void	*simulation(void *philosopher)
 	philo = philosopher;
 	pthread_create(&died, NULL, &is_die, (void *)philo);
 	pthread_detach(died);
-	if (philo->id % 2)
-		usleep(philo->args->time_to_eat * 1000L);
 	i = 0;
 	while (!philo->args->died)
 	{
@@ -109,7 +114,7 @@ int		start_threads(t_args *args, t_philo *philo)
 	{
 		if (pthread_create(&philo[i].thread, NULL, simulation, &philo[i]))
 			return (print_error("%d thread can't create."));
-		usleep(20);
+		usleep(100);
 	}
 	i = -1;
 	while (++i < args->philo_cnt)

@@ -53,7 +53,7 @@ int	init_philo_args(t_args *args, int ac, char **av)
 	if (integer_overflow_checker(var, av))
 		return (print_error("overflow arguments."));
 	args->philo_cnt = var[0];
-	args->time_to_die = var[1];
+	args->time_to_die = var[1] + 10;
 	args->time_to_eat = var[2];
 	args->time_to_sleep = var[3];
 	if (ac == 6)
