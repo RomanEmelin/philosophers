@@ -27,38 +27,38 @@ void	*is_die(void *philo)
 	while (!p->args->died)
 	{
 		t = get_time() - p->start_time - p->last_eat;
-		pthread_mutex_lock(&p->m_status);
+		sem_wait(p->s_status);
 		if (t > p->args->time_to_die)
 		{
 			print_status(p, DIE, p->start_time);
-			pthread_mutex_lock(&p->mutexes->m_died);
+			sem_wait(p->semaphores->s_died);
 			p->args->died = DIE;
-			pthread_mutex_unlock(&p->mutexes->m_died);
-			pthread_mutex_unlock(&p->m_status);
+			sem_post(p->semaphores->s_died);
+			sem_post(p->s_status);
 			break ;
 		}
-		pthread_mutex_unlock(&p->m_status);
+		sem_post(p->s_status);
 	}
 	return (NULL);
 }
 
 /*
-** The function simulates proccess of bind resources
-** using mutex
+** The function simulates process of bind resources
+** using semaphore
 */
 
 void	eating(t_philo *philo)
 {
-	pthread_mutex_lock(philo->l_fork);
-	pthread_mutex_lock(philo->r_fork);
+	sem_wait(philo->semaphores->s_forks);
+	sem_wait(philo->semaphores->s_forks);
 	print_status(philo, FORK, philo->start_time);
 	philo->last_eat = get_time() - philo->start_time;
-	pthread_mutex_lock(&philo->m_status);
+	sem_wait(philo->s_status);
 	print_status(philo, EAT, philo->start_time);
 	usleep(philo->args->time_to_eat * 1000L);
-	pthread_mutex_unlock(&philo->m_status);
-	pthread_mutex_unlock(philo->l_fork);
-	pthread_mutex_unlock(philo->r_fork);
+	sem_post(philo->s_status);
+	sem_post(philo->semaphores->s_forks);
+	sem_post(philo->semaphores->s_forks);
 }
 
 /*
@@ -105,8 +105,7 @@ void	*simulation(void *philosopher)
 
 /*
 ** Function create and join threads, each philosopher is a thread.
-** @param pointer on philosopher array of structures, array of mutex structures
-** 			argument structure
+** @param pointer on philosopher array of structures, structure with semaphores
 ** @return 1 if error, 0 if success
 */
 

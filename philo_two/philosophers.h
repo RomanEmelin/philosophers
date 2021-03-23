@@ -19,6 +19,7 @@
 # include <pthread.h>
 # include <sys/time.h>
 # include <stdlib.h>
+# include <semaphore.h>
 # define DIE 1
 # define FORK 2
 # define EAT 3
@@ -34,12 +35,12 @@
 
 # define IS_SPACE(x) (x==' '||x =='\t'||x =='\n'||x=='\v'||x =='\r'||x =='\f')
 
-typedef struct		s_mutexes
+typedef struct	s_semaphore
 {
-	pthread_mutex_t *m_forks;
-	pthread_mutex_t	m_died;
-	pthread_mutex_t	m_print;
-}					t_mutexes;
+	sem_t		*s_forks;
+	sem_t		*s_print;
+	sem_t		*s_died;
+}				t_semaphore;
 
 /*
 ** A args is a structure that contains:
@@ -61,10 +62,8 @@ typedef struct		s_args
 typedef struct		s_philo
 {
 	unsigned int	id;
-	pthread_mutex_t *l_fork;
-	pthread_mutex_t *r_fork;
-	t_mutexes		*mutexes;
-	pthread_mutex_t m_status;
+	t_semaphore		*semaphores;
+	sem_t			*s_status;
 	t_args			*args;
 	pthread_t		thread;
 	long			start_time;
@@ -85,7 +84,7 @@ void				printing(char *str, long time, int id);
 
 int					init_philo_args(t_args *args, int ac, char **av);
 int					validation(char **av);
-int					init_mutexes(t_mutexes *mutexes, t_args *args);
+int					init_semaphores(t_semaphore *semaphores, t_args *args);
 
 /*
 ** Error handling functions
@@ -100,9 +99,9 @@ int					print_error(char *str);
 
 int					initializate_simulation(t_args *args);
 long				get_time(void);
-t_philo				*init_philo(t_args *args, t_mutexes *mutexes);
+t_philo				*init_philo(t_args *args, t_semaphore *semaphores);
 void				*print_status(t_philo *philo, int flag, long start);
-void				finish_simulation(t_philo *philo, t_mutexes *mutexes);
+void				finish_simulation(t_philo *philo, t_semaphore *sems);
 void				usleep_fix(long sleep_time);
 
 /*

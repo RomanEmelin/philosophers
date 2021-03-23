@@ -27,7 +27,7 @@ int		print_error(char *str)
 }
 
 /*
-** The Function check integer overflow
+** The function check integer overflow
 */
 
 int		integer_overflow_checker(long var[5], char **av)
