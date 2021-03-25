@@ -6,7 +6,7 @@
 /*   By: mwinter <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/15 13:58:44 by mwinter           #+#    #+#             */
-/*   Updated: 2021/03/21 20:13:52 by mwinter          ###   ########.fr       */
+/*   Updated: 2021/03/24 15:20:40 by mwinter          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,10 +39,8 @@ t_philo		*init_philo(t_args *args, t_semaphore *semaphores)
 		philo[i].last_eat = time;
 		philo[i].args = args;
 		philo[i].semaphores = semaphores;
-		sem_unlink("status");
-		philo[i].s_status = sem_open("status", O_CREAT, 0644, 1);
-		if (philo[i].s_status == SEM_FAILED)
-			return (NULL);
+		if (args->meal_cnt)
+			philo[i].full = args->meal_cnt;
 	}
 	return (philo);
 }
@@ -80,7 +78,7 @@ int			init_semaphores(t_semaphore *semaphores, t_args *args)
 int			initializate_simulation(t_args *args)
 {
 	t_philo			*philosophers;
-	t_semaphore 	*sems;
+	t_semaphore		*sems;
 
 	sems = (t_semaphore *)malloc(sizeof(t_semaphore));
 	if (!sems)

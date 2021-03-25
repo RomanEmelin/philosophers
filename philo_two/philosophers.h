@@ -6,7 +6,7 @@
 /*   By: mwinter <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/14 15:57:15 by mwinter           #+#    #+#             */
-/*   Updated: 2021/03/21 21:07:49 by mwinter          ###   ########.fr       */
+/*   Updated: 2021/03/24 15:20:08 by mwinter          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,12 +35,12 @@
 
 # define IS_SPACE(x) (x==' '||x =='\t'||x =='\n'||x=='\v'||x =='\r'||x =='\f')
 
-typedef struct	s_semaphore
+typedef struct		s_semaphore
 {
-	sem_t		*s_forks;
-	sem_t		*s_print;
-	sem_t		*s_died;
-}				t_semaphore;
+	sem_t			*s_forks;
+	sem_t			*s_print;
+	sem_t			*s_died;
+}					t_semaphore;
 
 /*
 ** A args is a structure that contains:
@@ -63,6 +63,7 @@ typedef struct		s_philo
 {
 	unsigned int	id;
 	t_semaphore		*semaphores;
+	int				full;
 	sem_t			*s_status;
 	t_args			*args;
 	pthread_t		thread;

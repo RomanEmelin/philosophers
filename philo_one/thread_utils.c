@@ -6,7 +6,7 @@
 /*   By: mwinter <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/15 15:53:20 by mwinter           #+#    #+#             */
-/*   Updated: 2021/03/21 21:43:33 by mwinter          ###   ########.fr       */
+/*   Updated: 2021/03/24 15:23:27 by mwinter          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ void	*print_status(t_philo *philo, int flag, long start)
 	return (NULL);
 }
 
-void printing(char *str, long time, int id)
+void	printing(char *str, long time, int id)
 {
 	ft_putnbr_fd(time, 1);
 	write(1, " ms ", 4);

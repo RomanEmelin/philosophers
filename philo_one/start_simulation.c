@@ -6,7 +6,7 @@
 /*   By: mwinter <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/16 21:06:11 by mwinter           #+#    #+#             */
-/*   Updated: 2021/03/21 21:48:42 by mwinter          ###   ########.fr       */
+/*   Updated: 2021/03/24 15:23:55 by mwinter          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,8 @@
 
 void	*is_die(void *philo)
 {
-	t_philo *p;
-	long t;
+	t_philo	*p;
+	long	t;
 
 	p = philo;
 	while (!p->args->died)
@@ -119,7 +119,7 @@ int		start_threads(t_args *args, t_philo *philo)
 	{
 		if (pthread_create(&philo[i].thread, NULL, simulation, &philo[i]))
 			return (print_error("%d thread can't create."));
-		usleep(100);
+		usleep(20);
 	}
 	i = -1;
 	while (++i < args->philo_cnt)
