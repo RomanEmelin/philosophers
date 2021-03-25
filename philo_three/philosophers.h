@@ -42,6 +42,8 @@ typedef struct	s_semaphore
 	sem_t		*s_forks;
 	sem_t		*s_print;
 	sem_t		*s_died;
+	sem_t		*s_full;
+	sem_t		*s_one_die;
 }				t_semaphore;
 
 /*
@@ -58,16 +60,18 @@ typedef struct		s_args
 	long			time_to_eat;
 	long			time_to_sleep;
 	long			meal_cnt;
+	int 			full;
 	int				died;
 }					t_args;
 
 typedef struct		s_philo
 {
-	unsigned int	id;
+	int				id;
 	t_semaphore		*semaphores;
-	sem_t			*s_status;
 	t_args			*args;
 	pid_t 			*pid;
+	int 			full;
+	int 			fulling;
 	long			start_time;
 	long			last_eat;
 }					t_philo;
@@ -105,18 +109,19 @@ t_philo				*init_philo(t_args *args, t_semaphore *semaphores);
 void				*print_status(t_philo *philo, int flag, long start);
 void				finish_simulation(t_philo *philo, t_semaphore *sems);
 void				usleep_fix(long sleep_time);
-void 				*parent_state(void *p);
-void				*child_state(void *p);
+void				*somebody_die(void *p);
 void				wait_kill(t_philo *philo);
-
+void				*is_full(void *philo);
+void				*fuller(void *p);
+void				*is_die(void *p);
 /*
 ** Start simulation
 */
 
 int					start_processes(t_args *args, t_philo *philo);
-void				*simulation(t_philo *philo);
-void				*is_die(void *philo);
-void				eating(t_philo *philo);
+void				simulation(t_philo *philo);
+void				*state_process(void *philo);
+void 				eating(t_philo *philo);
 void				sleeping(t_philo *philo);
 
 #endif

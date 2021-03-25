@@ -12,6 +12,7 @@
 
 #include "philosophers.h"
 
+
 /*
 ** Function destroy semaphores and philo, also free allocated memory
 ** @param Philosopher structure, Structure with semaphores
@@ -19,15 +20,17 @@
 
 void	finish_simulation(t_philo *philo, t_semaphore *sems)
 {
-	free(philo->pid);
-	free(philo);
 	sem_unlink("print");
 	sem_unlink("died");
 	sem_unlink("forks");
+	sem_unlink("full");
 	sem_close(sems->s_forks);
 	sem_close(sems->s_died);
 	sem_close(sems->s_print);
+	sem_close(sems->s_full);
 	free(sems);
+	free(philo->pid);
+	free(philo);
 }
 
 /*
@@ -57,7 +60,12 @@ void	*print_status(t_philo *philo, int flag, long start)
 	if (!philo->args->died)
 	{
 		if (flag == DIE)
+		{
+			sem_unlink("died");
+			sem_close(philo->semaphores->s_print);
 			printing(" died\n", t, philo->id);
+			return (NULL);
+		}
 		else if (flag == FORK)
 			printing(" has taken a fork\n", t, philo->id);
 		else if (flag == EAT)

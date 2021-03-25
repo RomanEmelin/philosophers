@@ -40,6 +40,8 @@ t_philo		*init_philo(t_args *args, t_semaphore *semaphores)
 	philo->last_eat = time;
 	philo->args = args;
 	philo->semaphores = semaphores;
+	philo->full = 0;
+	philo->fulling = 0;
 	return (philo);
 }
 
@@ -54,15 +56,23 @@ int			init_semaphores(t_semaphore *semaphores, t_args *args)
 	sem_unlink("forks");
 	sem_unlink("print");
 	sem_unlink("died");
+	sem_unlink("full");
+	sem_unlink("one_die");
 	semaphores->s_forks = sem_open("forks", O_CREAT, 0644, args->philo_cnt);
 	if (semaphores->s_forks == SEM_FAILED)
 		return (print_error("can't init forks semaphore."));
 	semaphores->s_print = sem_open("print", O_CREAT, 0644, 1);
 	if (semaphores->s_print == SEM_FAILED)
 		return (print_error("can't init print semaphore"));
-	semaphores->s_died = sem_open("died", O_CREAT, 0644, 1);
+	semaphores->s_died = sem_open("died", O_CREAT, 0644, 0);
 	if (semaphores->s_died == SEM_FAILED)
 		return (print_error("can't init died semaphore"));
+	semaphores->s_full = sem_open("full", O_CREAT, 0644, 0);
+	if (semaphores->s_full == SEM_FAILED)
+		return (print_error("can't init full semaphore"));
+	semaphores->s_one_die = sem_open("one_die", O_CREAT, 0644, 1);
+	if (semaphores->s_one_die == SEM_FAILED)
+		return (print_error("can't init full semaphore"));
 	return (0);
 }
 

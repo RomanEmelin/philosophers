@@ -67,6 +67,7 @@ int	init_philo_args(t_args *args, int ac, char **av)
 	if (args->philo_cnt < 2 || args->philo_cnt > 200)
 		return (print_error("invalid number of philosophers."));
 	args->died = 0;
+	args->full = 0;
 	return (0);
 }
 
