@@ -88,6 +88,8 @@ int			initializate_simulation(t_args *args)
 	philosophers = init_philo(args, sems);
 	if (!philosophers)
 		return (1);
+	if (get_block(philosophers))
+		return (print_error("can't init block semaphores"));
 	if (start_threads(args, philosophers))
 		return (1);
 	finish_simulation(philosophers, sems);

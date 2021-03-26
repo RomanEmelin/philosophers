@@ -6,7 +6,7 @@
 /*   By: mwinter <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/14 15:57:15 by mwinter           #+#    #+#             */
-/*   Updated: 2021/03/21 21:07:49 by mwinter          ###   ########.fr       */
+/*   Updated: 2021/03/26 18:14:28 by mwinter          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,14 +37,14 @@
 
 # define IS_SPACE(x) (x==' '||x =='\t'||x =='\n'||x=='\v'||x =='\r'||x =='\f')
 
-typedef struct	s_semaphore
+typedef struct		s_semaphore
 {
-	sem_t		*s_forks;
-	sem_t		*s_print;
-	sem_t		*s_died;
-	sem_t		*s_full;
-	sem_t		*s_one_die;
-}				t_semaphore;
+	sem_t			*s_forks;
+	sem_t			*s_print;
+	sem_t			*s_died;
+	sem_t			*s_full;
+	sem_t			*s_one_die;
+}					t_semaphore;
 
 /*
 ** A args is a structure that contains:
@@ -60,18 +60,19 @@ typedef struct		s_args
 	long			time_to_eat;
 	long			time_to_sleep;
 	long			meal_cnt;
-	int 			full;
+	int				full;
 	int				died;
 }					t_args;
 
 typedef struct		s_philo
 {
 	int				id;
+	sem_t			**s_block;
 	t_semaphore		*semaphores;
 	t_args			*args;
-	pid_t 			*pid;
-	int 			full;
-	int 			fulling;
+	pid_t			*pid;
+	int				full;
+	int				fulling;
 	long			start_time;
 	long			last_eat;
 }					t_philo;
@@ -114,6 +115,10 @@ void				wait_kill(t_philo *philo);
 void				*is_full(void *philo);
 void				*fuller(void *p);
 void				*is_die(void *p);
+int					get_block(t_philo *philo);
+char				*get_name(int i);
+void				close_block(t_philo *philo);
+
 /*
 ** Start simulation
 */
@@ -121,7 +126,7 @@ void				*is_die(void *p);
 int					start_processes(t_args *args, t_philo *philo);
 void				simulation(t_philo *philo);
 void				*state_process(void *philo);
-void 				eating(t_philo *philo);
+void				eating(t_philo *philo);
 void				sleeping(t_philo *philo);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: mwinter <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/16 21:06:11 by mwinter           #+#    #+#             */
-/*   Updated: 2021/03/21 21:48:42 by mwinter          ###   ########.fr       */
+/*   Updated: 2021/03/26 18:15:06 by mwinter          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ void	*state_process(void *philo)
 	p = philo;
 	while (!p->args->died && !p->full)
 	{
+		sem_wait(p->s_block[p->id - 1]);
 		t = get_time() - p->start_time - p->last_eat;
 		if (p->args->meal_cnt && p->fulling == p->args->meal_cnt)
 		{
@@ -40,6 +41,7 @@ void	*state_process(void *philo)
 			sem_post(p->semaphores->s_one_die);
 			sem_post(p->semaphores->s_died);
 		}
+		sem_post(p->s_block[p->id - 1]);
 	}
 	return (NULL);
 }
@@ -54,9 +56,11 @@ void	eating(t_philo *philo)
 	sem_wait(philo->semaphores->s_forks);
 	sem_wait(philo->semaphores->s_forks);
 	print_status(philo, FORK, philo->start_time);
+	sem_wait(philo->s_block[philo->id - 1]);
 	philo->last_eat = get_time() - philo->start_time;
 	print_status(philo, EAT, philo->start_time);
 	usleep(philo->args->time_to_eat * 1000L);
+	sem_post(philo->s_block[philo->id - 1]);
 	sem_post(philo->semaphores->s_forks);
 	sem_post(philo->semaphores->s_forks);
 	if (philo->args->meal_cnt)
@@ -83,7 +87,7 @@ void	sleeping(t_philo *philo)
 void	simulation(t_philo *philo)
 {
 	pthread_t	state;
-	pthread_t 	die;
+	pthread_t	die;
 
 	pthread_create(&state, NULL, &state_process, (void *)philo);
 	pthread_detach(state);
@@ -133,6 +137,5 @@ int		start_processes(t_args *args, t_philo *philo)
 		pthread_join(full, NULL);
 	}
 	pthread_join(die, NULL);
-	wait_kill(philo);
 	return (0);
 }

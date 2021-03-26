@@ -26,17 +26,18 @@ void	*is_die(void *philo)
 	p = philo;
 	while (!p->args->died)
 	{
+		sem_wait(p->args->s_block[p->id - 1]);
 		t = get_time() - p->start_time - p->last_eat;
 		if (p->args->meal_cnt && !p->full)
 			return (print_status(p, FULL, p->start_time));
-		if (t > p->args->time_to_die)
+		else if (t > p->args->time_to_die)
 		{
 			print_status(p, DIE, p->start_time);
 			sem_wait(p->semaphores->s_died);
 			p->args->died = DIE;
 			sem_post(p->semaphores->s_died);
-			break ;
 		}
+		sem_post(p->args->s_block[p->id - 1]);
 	}
 	return (NULL);
 }
@@ -52,8 +53,10 @@ void	eating(t_philo *philo)
 	sem_wait(philo->semaphores->s_forks);
 	print_status(philo, FORK, philo->start_time);
 	philo->last_eat = get_time() - philo->start_time;
+	sem_wait(philo->args->s_block[philo->id - 1]);
 	print_status(philo, EAT, philo->start_time);
 	usleep(philo->args->time_to_eat * 1000L);
+	sem_post(philo->args->s_block[philo->id - 1]);
 	sem_post(philo->semaphores->s_forks);
 	sem_post(philo->semaphores->s_forks);
 }

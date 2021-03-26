@@ -7,7 +7,8 @@ SRCS = main.c\
        initialize_simulation.c\
        start_simulation.c\
        utils2.c\
-       process_utils.c
+       process_utils.c\
+       semaphore_utils.c
 
 HDR = ./
 

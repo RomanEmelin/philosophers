@@ -6,12 +6,11 @@
 /*   By: mwinter <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/15 15:53:20 by mwinter           #+#    #+#             */
-/*   Updated: 2021/03/21 21:43:33 by mwinter          ###   ########.fr       */
+/*   Updated: 2021/03/26 18:11:45 by mwinter          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
-
 
 /*
 ** Function destroy semaphores and philo, also free allocated memory
@@ -20,10 +19,13 @@
 
 void	finish_simulation(t_philo *philo, t_semaphore *sems)
 {
+	close_block(philo);
 	sem_unlink("print");
 	sem_unlink("died");
 	sem_unlink("forks");
 	sem_unlink("full");
+	sem_unlink("one_die");
+	sem_close(sems->s_one_die);
 	sem_close(sems->s_forks);
 	sem_close(sems->s_died);
 	sem_close(sems->s_print);
@@ -61,7 +63,6 @@ void	*print_status(t_philo *philo, int flag, long start)
 	{
 		if (flag == DIE)
 		{
-			sem_unlink("died");
 			sem_close(philo->semaphores->s_print);
 			printing(" died\n", t, philo->id);
 			return (NULL);
@@ -81,7 +82,7 @@ void	*print_status(t_philo *philo, int flag, long start)
 	return (NULL);
 }
 
-void printing(char *str, long time, int id)
+void	printing(char *str, long time, int id)
 {
 	ft_putnbr_fd(time, 1);
 	write(1, " ms ", 4);
