@@ -36,7 +36,7 @@ t_philo		*init_philo(t_args *args, t_semaphore *semaphores)
 	{
 		philo[i].id = i + 1;
 		philo[i].start_time = time;
-		philo[i].last_eat = time;
+		philo[i].last_eat = 0;
 		philo[i].args = args;
 		philo[i].semaphores = semaphores;
 		if (args->meal_cnt)

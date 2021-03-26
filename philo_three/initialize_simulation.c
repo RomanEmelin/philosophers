@@ -35,7 +35,7 @@ t_philo		*init_philo(t_args *args, t_semaphore *semaphores)
 	}
 	time = get_time();
 	philo->start_time = time;
-	philo->last_eat = time;
+	philo->last_eat = 0;
 	philo->args = args;
 	philo->semaphores = semaphores;
 	philo->full = 0;

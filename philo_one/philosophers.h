@@ -103,7 +103,7 @@ long				get_time(void);
 t_philo				*init_philo(t_args *args, t_mutexes *mutexes);
 void				*print_status(t_philo *philo, int flag, long start);
 void				finish_simulation(t_philo *philo, t_mutexes *mutexes);
-void				usleep_fix(long sleep_time);
+void				usleep_fix(long time);
 
 /*
 ** Start simulation

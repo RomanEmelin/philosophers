@@ -109,7 +109,7 @@ long				get_time(void);
 t_philo				*init_philo(t_args *args, t_semaphore *semaphores);
 void				*print_status(t_philo *philo, int flag, long start);
 void				finish_simulation(t_philo *philo, t_semaphore *sems);
-void				usleep_fix(long sleep_time);
+void				usleep_fix(long time);
 void				*somebody_die(void *p);
 void				wait_kill(t_philo *philo);
 void				*is_full(void *philo);

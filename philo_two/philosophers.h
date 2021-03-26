@@ -104,7 +104,7 @@ long				get_time(void);
 t_philo				*init_philo(t_args *args, t_semaphore *semaphores);
 void				*print_status(t_philo *philo, int flag, long start);
 void				finish_simulation(t_philo *philo, t_semaphore *sems);
-void				usleep_fix(long sleep_time);
+void				usleep_fix(long time);
 int					get_block(t_philo *philo);
 char				*get_name(int i);
 void				close_block(t_philo *philo);

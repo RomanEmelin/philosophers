@@ -83,3 +83,12 @@ void	printing(char *str, long time, int id)
 	ft_putnbr_fd(id, 1);
 	write(1, str, ft_strlen(str));
 }
+
+void usleep_fix(long time)
+{
+	long t;
+
+	t = get_time();
+	while (get_time() - t < time)
+		usleep(1);
+}

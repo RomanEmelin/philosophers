@@ -38,7 +38,7 @@ t_philo		*init_philo(t_args *args, t_mutexes *mutexes)
 		philo[i].l_fork = &mutexes->m_forks[i];
 		philo[i].r_fork = &mutexes->m_forks[(i + 1) % args->philo_cnt];
 		philo[i].start_time = time;
-		philo[i].last_eat = time;
+		philo[i].last_eat = 0;
 		philo[i].args = args;
 		philo[i].mutexes = mutexes;
 		pthread_mutex_init(&philo[i].m_status, NULL);

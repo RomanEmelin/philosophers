@@ -55,7 +55,7 @@ void	eating(t_philo *philo)
 	philo->last_eat = get_time() - philo->start_time;
 	pthread_mutex_lock(&philo->m_status);
 	print_status(philo, EAT, philo->start_time);
-	usleep(philo->args->time_to_eat * 1000L);
+	usleep_fix(philo->args->time_to_eat);
 	pthread_mutex_unlock(&philo->m_status);
 	pthread_mutex_unlock(philo->l_fork);
 	pthread_mutex_unlock(philo->r_fork);
@@ -68,7 +68,7 @@ void	eating(t_philo *philo)
 void	sleeping(t_philo *philo)
 {
 	print_status(philo, SLEEP, philo->start_time);
-	usleep(philo->args->time_to_sleep * 1000L);
+	usleep_fix(philo->args->time_to_sleep);;
 }
 
 /*
@@ -119,7 +119,7 @@ int		start_threads(t_args *args, t_philo *philo)
 	{
 		if (pthread_create(&philo[i].thread, NULL, simulation, &philo[i]))
 			return (print_error("%d thread can't create."));
-		usleep(20);
+		usleep_fix(10);
 	}
 	i = -1;
 	while (++i < args->philo_cnt)

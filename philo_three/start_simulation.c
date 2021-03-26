@@ -59,7 +59,7 @@ void	eating(t_philo *philo)
 	sem_wait(philo->s_block[philo->id - 1]);
 	philo->last_eat = get_time() - philo->start_time;
 	print_status(philo, EAT, philo->start_time);
-	usleep(philo->args->time_to_eat * 1000L);
+	usleep_fix(philo->args->time_to_eat);
 	sem_post(philo->s_block[philo->id - 1]);
 	sem_post(philo->semaphores->s_forks);
 	sem_post(philo->semaphores->s_forks);
@@ -74,7 +74,7 @@ void	eating(t_philo *philo)
 void	sleeping(t_philo *philo)
 {
 	print_status(philo, SLEEP, philo->start_time);
-	usleep(philo->args->time_to_sleep * 1000L);
+	usleep_fix(philo->args->time_to_sleep);
 }
 
 /*
@@ -98,7 +98,7 @@ void	simulation(t_philo *philo)
 		eating(philo);
 		if (philo->args->meal_cnt && philo->fulling == philo->args->meal_cnt)
 		{
-			usleep(100);
+			usleep_fix(1);
 			continue ;
 		}
 		sleeping(philo);
